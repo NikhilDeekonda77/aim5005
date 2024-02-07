@@ -30,8 +30,8 @@ class MinMaxScaler:
         x = self._check_is_array(x)
         diff_max_min = self.maximum - self.minimum
         
-        # TODO: There is a bug here... Look carefully! 
-        return x-self.minimum/(self.maximum-self.minimum)
+        # Resolved! 
+        return (x-self.minimum)/(self.maximum-self.minimum)
     
     def fit_transform(self, x:list) -> np.ndarray:
         x = self._check_is_array(x)
@@ -42,4 +42,33 @@ class MinMaxScaler:
 class StandardScaler:
     def __init__(self):
         self.mean = None
-        raise NotImplementedError
+        self.standard_deviation = None
+
+    def _check_is_array(self, x:np.ndarray) -> np.ndarray:
+        """
+        Try to convert x to a np.ndarray if it'a not a np.ndarray and return. If it can't be cast raise an error
+        """
+        if not isinstance(x, np.ndarray):
+            x = np.array(x)
+            
+        assert isinstance(x, np.ndarray), "Expected the input to be a list"
+        return x
+        
+    
+    def fit(self, x:np.ndarray) -> None:   
+        x = self._check_is_array(x)
+        self.mean=x.mean(axis=0)
+        self.standard_deviation=x.std(axis=0)
+        
+    def transform(self, x:np.ndarray) -> list:
+        """
+        Standard Scale the given vector
+        """
+        x = self._check_is_array(x)
+        
+        return (x-self.mean)/(self.standard_deviation)
+    
+    def fit_transform(self, x:list) -> np.ndarray:
+        x = self._check_is_array(x)
+        self.fit(x)
+        return self.transform(x)
